@@ -2,9 +2,6 @@ var map;
 var markersArray = [];
 var bounds;
 var infowindow;
-var Client id = CED2ITPQPE5NTXDAHR0H2UOY55SU2JDWXRKEKR4JMQQRLZ4M
-var Client secret = ZOIEHZM5WYB3EJ41MIN2XH5BFLP5LASOUXLCWDD3KKNZGASN
-
 
 
 //Initialize the map and its contents
@@ -72,24 +69,13 @@ var markers = [
     boolTest: true
     },
     {
-    title: "Fashion Square Mall",
-    lat: 33.5029868,
-    lng: -111.9312346,
-    streetAddress: "7014 E Camelback Rd",
-    cityAddress: "Scottsdale, AZ 85251",
-    url: "http://www.fashionsquare.com/?utm_source=google&utm_medium=onlinesearch&utm_content=gmp_website_button&utm_campaign=yext",
-    id: "nav4",
-    visible: ko.observable(true),
-    boolTest: true
-    },
-    {
     title: "Phoenix Zoo",
     lat: 33.4510486,
     lng: -111.950212,
     streetAddress: "455 N Galvin Pkwy",
     cityAddress: "Phoenix, AZ 85008",
     url: "http://phoenixzoo.org/",
-    id: "nav5",
+    id: "nav4",
     visible: ko.observable(true),
     boolTest: true
     },
@@ -100,7 +86,7 @@ var markers = [
     streetAddress: "113 N 6th St",
     cityAddress: "Phoenix, AZ 85004",
     url: "http://heritagesquarephx.org/",
-    id: "nav6",
+    id: "nav5",
     visible: ko.observable(true),
     boolTest: true
     },
@@ -111,7 +97,7 @@ var markers = [
     streetAddress: "600 E Washington St",
     cityAddress: "Phoenix, AZ 85004",
     url: "http://www.azscience.org/",
-    id: "nav7",
+    id: "nav6",
     visible: ko.observable(true),
     boolTest: true
     }
@@ -120,14 +106,36 @@ var markers = [
 //google streetview url
 var headingImageView = [5, 235, 55, 170, 190, 240, -10, 10, 190];
 var streetViewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=180x90&location=';
-
-$.getJSON('https://api.foursquare.com/v2/venues/search?ll=40.7,-74&query=mcdonalds&client_id=2POUFAUU4ZBJ2MTDOY3S2YHR2NIT52FYW0LUTPHBMNTJFJNQ&client_secret=YFDZI1YWV3ZI5S5SPM2DZJEQIEBPIDJ5XFZBWTIKIQZVQNYM&v=20120101',
-    function(data) {
-        $.each(data.response.markers, function(i,marker){
-            content = '<p>' + markers.title + '</p>';
-            $(content).appendTo(location.contentString);
-       });
+document.getElementById('zoom-to-area').addEventListener('click', function() {
+          zoomToArea();
 });
+
+function zoomToArea() {
+       // Initialize the geocoder.
+       var geocoder = new google.maps.Geocoder();
+       // Get the address or place that the user entered.
+       var address = document.getElementById('zoom-to-area-text').value;
+       // Make sure the address isn't blank.
+       if (address == '') {
+         window.alert('You must enter an area, or address.');
+       } else {
+         // Geocode the address/area entered to get the center. Then, center the map
+         // on it and zoom in
+         geocoder.geocode(
+           { address: address,
+             componentRestrictions: {locality: 'Phoenix'}
+           }, function(results, status) {
+             if (status == google.maps.GeocoderStatus.OK) {
+               map.setCenter(results[0].geometry.location);
+               map.setZoom(15);
+             } else {
+               window.alert('We could not find that location - try entering a more' +
+                   ' specific place.');
+             }
+           });
+       }
+     }
+
 
 //location is assigned to markers by looping through the array
 //image or icon for marker is assigned
@@ -181,12 +189,14 @@ function locationMarkers(location) {
             marker.setAnimation(google.maps.Animation.BOUNCE);
             infowindow.open(map,marker);
             map.setZoom(16);
-            map.setCenter(marker.getPosition());
+            //map.setCenter(marker.getPosition());
             location[i].picBoolTest = true;
           };
         })(location[i].holdMarker, i));
     }
 }
+
+
 
 //use of knockout to display search result in nav bar
 var viewModel = {
