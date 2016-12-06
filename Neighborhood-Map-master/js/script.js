@@ -2,30 +2,23 @@ var map;
 var markersArray = [];
 var bounds;
 var infowindow;
-$wikiElem = ('#scroller');
-// var CLIENT_ID = "CED2ITPQPE5NTXDAHR0H2UOY55SU2JDWXRKEKR4JMQQRLZ4M";
-// var CLIENT_SECRET = "ZOIEHZM5WYB3EJ41MIN2XH5BFLP5LASOUXLCWDD3KKNZGASN";
-// this.markers = ko.observableArray([]);
-// this.allLocations = ko.observableArray([]);
-//wikipedia ajax request
-function getWikiInfo(){
-  var wikiUrl ='http://en.wikipedia.org/w/api.php?action=opensearch&search='+'&format=json&callback=wikiCallback';
-  $wikiElem.text("");
-  var placeStr =
-  $.ajax({
-    url: wikiUrl,
-    dataType: "jsonp",
-    success: function(response){
-      var placeList = response[1];
-      for(var i=0; i < placeList.length; i++){
-        placeStr = placeList[i];
-        var url = 'http://en.wikipedia.org/wiki/' + placeStr;
-        $wikiElem.append('<li><a href="' + url + '">' + placeStr + '</a></li>');
-
-      };
-    }
-  });
-}
+$("#input").keyup(function(e){
+        var q = $("#input").val();
+        $.getJSON("http://en.wikipedia.org/w/api.php?callback=?",
+        {
+          srsearch: q,
+          action: "query",
+          list: "search",
+          format: "json"
+        },
+        function(data) {
+          $("#results").empty();
+          $("#results").append("Results for <b>" + q + "</b>");
+          $.each(data.query.search, function(i,item){
+            $("#results").append("<div><a href='http://en.wikipedia.org/wiki/" + encodeURIComponent(item.title) + "'>" + item.title + "</a>" + item.snippet + "</div>");
+          });
+        });
+      });
 
 // function getFourSquareData(){
 //   var baseUrl = "https://api.foursquare.com/v2/venues/search";
@@ -148,35 +141,35 @@ var markers = [
     boolTest: true
     }
 ];
-// // get location data from foursquare
-// function fetchForsquare(allLocations, map, markers) {
-//   var locationDataArr = [];
-//   var foursquareUrl = "";
-//   var place = [];
-//   for(i=0; i<location.length; i++)  {
-//     foursquareUrl = 'https://api.foursquare.com/v2/venues/search' +
-//       '?client_id=CED2ITPQPE5NTXDAHR0H2UOY55SU2JDWXRKEKR4JMQQRLZ4M' +
-//       '&client_secret=ZOIEHZM5WYB3EJ41MIN2XH5BFLP5LASOUXLCWDD3KKNZGASN' +
-//       '&v=20161205' +
-//       '&m=foursquare' +
-//       '&ll=' + location[i].lat + ',' + location[i].lng +
-//       '&query=' + location[i].title +
-//       '&intent=match';
-//
-//     $.getJSON(foursquareUrl, function(data) {
-//       if(data.response.venues){
-//         var item = data.response.venues[0];
-//         allLocations.push(item);
-//         location = {lat: item.location.lat, lng: item.location.lng, name: item.name, loc: item.location.address + " " + item.location.city + ", " + item.location.state + " " + item.location.postalCode};
-//         locationDataArr.push(place);
-//         placeMarkers(allLocations, place, location, map, markers);
-//       } else {
-//         alert("Something went wrong, Could not retreive data from foursquare. Please try again!");
-//         return;
-//       }
-//     });
-//   }
-// }
+// get location data from foursquare
+function fetchForsquare(allLocations, map, markers) {
+  var locationDataArr = [];
+  var foursquareUrl = "";
+  var place = [];
+  for(i=0; i<location.length; i++)  {
+    foursquareUrl = 'https://api.foursquare.com/v2/venues/search' +
+      '?client_id=CED2ITPQPE5NTXDAHR0H2UOY55SU2JDWXRKEKR4JMQQRLZ4M' +
+      '&client_secret=ZOIEHZM5WYB3EJ41MIN2XH5BFLP5LASOUXLCWDD3KKNZGASN' +
+      '&v=20161205' +
+      '&m=foursquare' +
+      '&ll=' + location[i].lat + ',' + location[i].lng +
+      '&query=' + location[i].title +
+      '&intent=match';
+
+    $.getJSON(foursquareUrl, function(data) {
+      if(data.response.venues){
+        var item = data.response.venues[0];
+        allLocations.push(item);
+        location = {lat: item.location.lat, lng: item.location.lng, name: item.name, loc: item.location.address + " " + item.location.city + ", " + item.location.state + " " + item.location.postalCode};
+        locationDataArr.push(place);
+        placeMarkers(allLocations, place, location, map, markers);
+      } else {
+        alert("Something went wrong, Could not retreive data from foursquare. Please try again!");
+        return;
+      }
+    });
+  }
+}
 
 
 //google streetview url
