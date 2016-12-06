@@ -2,7 +2,53 @@ var map;
 var markersArray = [];
 var bounds;
 var infowindow;
+$wikiElem = ('#scroller');
+// var CLIENT_ID = "CED2ITPQPE5NTXDAHR0H2UOY55SU2JDWXRKEKR4JMQQRLZ4M";
+// var CLIENT_SECRET = "ZOIEHZM5WYB3EJ41MIN2XH5BFLP5LASOUXLCWDD3KKNZGASN";
+// this.markers = ko.observableArray([]);
+// this.allLocations = ko.observableArray([]);
+//wikipedia ajax request
+function getWikiInfo(){
+  var wikiUrl ='http://en.wikipedia.org/w/api.php?action=opensearch&search='+'&format=json&callback=wikiCallback';
+  $wikiElem.text("");
+  var placeStr =
+  $.ajax({
+    url: wikiUrl,
+    dataType: "jsonp",
+    success: function(response){
+      var placeList = response[1];
+      for(var i=0; i < placeList.length; i++){
+        placeStr = placeList[i];
+        var url = 'http://en.wikipedia.org/wiki/' + placeStr;
+        $wikiElem.append('<li><a href="' + url + '">' + placeStr + '</a></li>');
 
+      };
+    }
+  });
+}
+
+// function getFourSquareData(){
+//   var baseUrl = "https://api.foursquare.com/v2/venues/search";
+//   var city = "Phoenix";
+//   var query = "Restaurant";
+//
+//
+//   $.ajax({
+//     url: baseUrl,
+//     dataType: "json",
+//     data: {
+//       client_id: CLIENT_ID,
+//       client_secret: CLIENT_SECRET,
+//       v : 20161205,
+//       near: city,
+//       query: query,
+//       async: true
+//     }
+//   }).done(function(response) {
+//     console.log(response);
+//   });
+// }
+// getFourSquareData();
 
 //Initialize the map and its contents
 function initialize() {
@@ -102,40 +148,40 @@ var markers = [
     boolTest: true
     }
 ];
+// // get location data from foursquare
+// function fetchForsquare(allLocations, map, markers) {
+//   var locationDataArr = [];
+//   var foursquareUrl = "";
+//   var place = [];
+//   for(i=0; i<location.length; i++)  {
+//     foursquareUrl = 'https://api.foursquare.com/v2/venues/search' +
+//       '?client_id=CED2ITPQPE5NTXDAHR0H2UOY55SU2JDWXRKEKR4JMQQRLZ4M' +
+//       '&client_secret=ZOIEHZM5WYB3EJ41MIN2XH5BFLP5LASOUXLCWDD3KKNZGASN' +
+//       '&v=20161205' +
+//       '&m=foursquare' +
+//       '&ll=' + location[i].lat + ',' + location[i].lng +
+//       '&query=' + location[i].title +
+//       '&intent=match';
+//
+//     $.getJSON(foursquareUrl, function(data) {
+//       if(data.response.venues){
+//         var item = data.response.venues[0];
+//         allLocations.push(item);
+//         location = {lat: item.location.lat, lng: item.location.lng, name: item.name, loc: item.location.address + " " + item.location.city + ", " + item.location.state + " " + item.location.postalCode};
+//         locationDataArr.push(place);
+//         placeMarkers(allLocations, place, location, map, markers);
+//       } else {
+//         alert("Something went wrong, Could not retreive data from foursquare. Please try again!");
+//         return;
+//       }
+//     });
+//   }
+// }
+
 
 //google streetview url
 var headingImageView = [5, 235, 55, 170, 190, 240, -10, 10, 190];
 var streetViewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=180x90&location=';
-document.getElementById('zoom-to-area').addEventListener('click', function() {
-          zoomToArea();
-});
-
-function zoomToArea() {
-       // Initialize the geocoder.
-       var geocoder = new google.maps.Geocoder();
-       // Get the address or place that the user entered.
-       var address = document.getElementById('zoom-to-area-text').value;
-       // Make sure the address isn't blank.
-       if (address == '') {
-         window.alert('You must enter an area, or address.');
-       } else {
-         // Geocode the address/area entered to get the center. Then, center the map
-         // on it and zoom in
-         geocoder.geocode(
-           { address: address,
-             componentRestrictions: {locality: 'Phoenix'}
-           }, function(results, status) {
-             if (status == google.maps.GeocoderStatus.OK) {
-               map.setCenter(results[0].geometry.location);
-               map.setZoom(15);
-             } else {
-               window.alert('We could not find that location - try entering a more' +
-                   ' specific place.');
-             }
-           });
-       }
-     }
-
 
 //location is assigned to markers by looping through the array
 //image or icon for marker is assigned
@@ -145,7 +191,6 @@ function locationMarkers(location) {
         location[i].holdMarker = new google.maps.Marker({
           position: new google.maps.LatLng(location[i].lat, location[i].lng),
           map: map,
-          animation : google.maps.Animation.DROP,
           title: location[i].title,
           icon: {
             url: 'img/marker.png',
@@ -153,10 +198,10 @@ function locationMarkers(location) {
             origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(12.5, 40)
 
-            }
+          }
 
 
-        });
+      });
 
         bounds.extend(location[i].holdMarker.position);
 
@@ -178,7 +223,6 @@ function locationMarkers(location) {
 
       viewModel.showInfo = function(location){
         google.maps.event.trigger(location.holdMarker,'click');
-
       }
 
 
@@ -189,11 +233,16 @@ function locationMarkers(location) {
             marker.setAnimation(google.maps.Animation.BOUNCE);
             infowindow.open(map,marker);
             map.setZoom(16);
-            //map.setCenter(marker.getPosition());
+            setTimeout(function () {
+              infowindow.close();
+              marker.setAnimation(google.maps.Animation.DROP);
+            }, 5000);
             location[i].picBoolTest = true;
           };
         })(location[i].holdMarker, i));
+
     }
+
 }
 
 
