@@ -18,8 +18,11 @@
 
 
     </style>
+
+
     <div id="map-canvas"></div>
     <div id="search-container">
+
         <div id="search-nav">
             <input id="input" placeholder="Search…" type="input" data-bind="textInput: query"></input>
         <div id="scroller">
@@ -37,6 +40,16 @@
                   </div>
               </script>
           </div>
+        <div id="wiki-results">
+          <ul data-bind="template: {name: 'marker', foreach:markers}">
+          </ul>
+
+                      <li data-bind="text: title, click: $parent.showInfo">
+                          <strong data-bind="text: title"></strong>
+                      </li>
+                  </a>
+              </div>
+          </script>
       </div>
     </div>
 

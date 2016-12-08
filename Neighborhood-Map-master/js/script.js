@@ -2,8 +2,8 @@ var map;
 var markersArray = [];
 var bounds;
 var infowindow;
-$("#input").keyup(function(e){
-        var q = $("#input").val();
+function getWikiInfo(){
+        var q = $("#scroller").val();
         $.getJSON("http://en.wikipedia.org/w/api.php?callback=?",
         {
           srsearch: q,
@@ -12,13 +12,13 @@ $("#input").keyup(function(e){
           format: "json"
         },
         function(data) {
-          $("#results").empty();
-          $("#results").append("Results for <b>" + q + "</b>");
+          $("#wiki-results").empty();
+          $("#wiki-results").append("Results for <b>" + q + "</b>");
           $.each(data.query.search, function(i,item){
-            $("#results").append("<div><a href='http://en.wikipedia.org/wiki/" + encodeURIComponent(item.title) + "'>" + item.title + "</a>" + item.snippet + "</div>");
+            $("#wiki-results").append("<div><a href='http://en.wikipedia.org/wiki/" + encodeURIComponent(item.title) + "'>" + item.title + "</a>" + item.snippet + "</div>");
           });
         });
-      });
+  }
 
 // function getFourSquareData(){
 //   var baseUrl = "https://api.foursquare.com/v2/venues/search";
@@ -216,6 +216,7 @@ function locationMarkers(location) {
 
       viewModel.showInfo = function(location){
         google.maps.event.trigger(location.holdMarker,'click');
+        getWikiInfo();
       }
 
 
@@ -233,7 +234,7 @@ function locationMarkers(location) {
             location[i].picBoolTest = true;
           };
         })(location[i].holdMarker, i));
-
+        getWikiInfo();
     }
 
 }
