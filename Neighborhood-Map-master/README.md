@@ -6,5 +6,6 @@
 * Open the browser window and open index.html from applications folder to navigate map.
 
 # Project Specifics #
-Use of google maps API to display famous sightseeing locations in Phoenix, AZ.
-use of framework: knockout.js for implementation and execution
+* Use of google maps API to display famous sightseeing locations in Phoenix, AZ.
+* Wikipedia ajax requested when marker is clicked and article is displayed for the location.
+* Use of framework: knockout.js for implementation and execution

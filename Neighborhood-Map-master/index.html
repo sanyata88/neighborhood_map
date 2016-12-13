@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Neighborhood Map Project</title>
     <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" media="(max-width: 670px)" href="css/responsive.css">
 </head>
 <body>
     <style>
@@ -32,24 +31,15 @@
                   <div data-bind="visible: visible">
                       <a href="#" data-bind="attr: {id: id}">
                           <li data-bind="text: title, click: $parent.showInfo">
-                              <strong data-bind="text: title"></strong>
-                              <p data-bind="text: streetAddress"></p>
-                              <p data-bind="text: cityAddress"></p>
                           </li>
                       </a>
                   </div>
               </script>
           </div>
-        <div id="wiki-results">
-          <ul data-bind="template: {name: 'marker', foreach:markers}">
-          </ul>
-
-                      <li data-bind="text: title, click: $parent.showInfo">
-                          <strong data-bind="text: title"></strong>
-                      </li>
-                  </a>
-              </div>
-          </script>
+      </div>
+      <div id="wiki-results">
+        <h3>Wikipedia Result for<span data-bind="text: wikiLoc"</span></h3>
+        <p data-bind="html: wikiSnip"></p>
       </div>
     </div>
 
@@ -58,6 +48,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="js/lib/knockout-3.3.0.js"></script>
     <script type="text/javascript" src="js/script.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?&key=AIzaSyAfk7v876BCwIxPSa74iHiX_jRGfsYzUpU&v=3.exp&callback=initialize"></script>
+    <script async defer onerror="mapError()" src="https://maps.googleapis.com/maps/api/js?&key=AIzaSyAfk7v876BCwIxPSa74iHiX_jRGfsYzUpU&v=3.exp&callback=initialize"></script>
 </body>
 </html>
